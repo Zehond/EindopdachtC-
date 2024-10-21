@@ -1,6 +1,10 @@
-﻿using System.Collections.ObjectModel;
+﻿using Newtonsoft.Json;
+using System.Collections.ObjectModel;
+using System.IO;
 using System.Runtime.InteropServices;
+using System.Runtime.Serialization;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -9,7 +13,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
+
 
 namespace Client
 {
@@ -34,11 +38,17 @@ namespace Client
             InProgressItems = new ObservableCollection<string>() { "Task 3" };
             DoneItems = new ObservableCollection<string>() { "Task 4" };
             DataContext = this;
+
+            loadFromFile();
         }
-        /// <summary>
-        /// deze methode start het drag en drop proces wanneer de muis wordt ingedrukt en bewogen
-        /// </summary>
-        private void ListBoxItem_MouseMove(object sender, MouseEventArgs e)
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            saveToFile();
+        }
+            /// <summary>
+            /// deze methode start het drag en drop proces wanneer de muis wordt ingedrukt en bewogen
+            /// </summary>
+            private void ListBoxItem_MouseMove(object sender, MouseEventArgs e)
         {
             if (e.LeftButton == MouseButtonState.Pressed)
             {
@@ -75,11 +85,58 @@ namespace Client
                     else if (InProgressItems.Contains(task)) InProgressItems.Remove(task);
                     else if (DoneItems.Contains(task)) DoneItems.Remove(task);
 
-                    
+
                     targetList.Add(task);
                 }
             }
         }
+        private void saveToFile()
+        {
+            var tasks = new
+            {
+                TodoItems,
+                InProgressItems,
+                DoneItems
+            };
 
+            string jsonTasks = JsonConvert.SerializeObject(tasks, Formatting.Indented);
+            string werkdirectory = Environment.CurrentDirectory;
+            string path = Path.Combine(werkdirectory, "TaskInJsonFormatCBD.json");
+            MessageBox.Show("Bestand opgeslagen in: " + path);
+
+            File.WriteAllText(path, jsonTasks);
+
+
+        }
+        private void loadFromFile()
+        {
+            if (File.Exists("TaskInJsonFormatCBD.json"))
+            {
+                {
+                    string json = File.ReadAllText("TaskInJsonFormatCBD.json");
+                    var tasks = JsonConvert.DeserializeObject<dynamic>(json);
+
+                    TodoItems.Clear();
+                    foreach (var item in tasks.TodoItems)
+                    {
+                        TodoItems.Add(item.ToString());
+                    }
+
+                    InProgressItems.Clear();
+                    foreach (var item in tasks.InProgressItems)
+                    {
+                        InProgressItems.Add(item.ToString());
+                    }
+
+                    DoneItems.Clear();
+                    foreach (var item in tasks.DoneItems)
+                    {
+                        DoneItems.Add(item.ToString());
+
+                    }
+
+                }
+            }
+        }
     }
 }
