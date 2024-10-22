@@ -5,8 +5,45 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Client"
         mc:Ignorable="d"
+        Closing="Window_Closing"
         Title="MainWindow" Height="450" Width="800">
-    <Grid>
+    <Grid Name="GridLayout">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <!--~itemsource is wat nodig is om de items te binden aan een ObservableCollection, zodat de taken dynamisch kunnen worden geladen-->
+        <!-- To Do Column -->
+        <ListBox Name="ToDoListBox" Grid.Column="0" AllowDrop="True" Drop="ListBox_Drop" DragOver="ListBox_DragOver" ItemsSource="{Binding TodoItems}" Margin="0,22,0,0">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding}" MouseMove="ListBoxItem_MouseMove" />
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
 
+        <!-- In Progress Column -->
+        <ListBox Name="InProgressListBox" Grid.Column="1" AllowDrop="True" Drop="ListBox_Drop" DragOver="ListBox_DragOver" ItemsSource="{Binding InProgressItems}" Margin="0,22,0,0">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding}" MouseMove="ListBoxItem_MouseMove" />
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+        <!-- Done Column -->
+        <ListBox Name="DoneListBox" Grid.Column="2" AllowDrop="True" Drop="ListBox_Drop" DragOver="ListBox_DragOver" ItemsSource="{Binding DoneItems}" Margin="0,22,0,0">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding}" MouseMove="ListBoxItem_MouseMove" />
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <!--kolom namen-->
+        <TextBlock Text="To Do" FontWeight="Bold" FontSize="16" Margin="0,0,0,5" Grid.Column="0" VerticalAlignment="Top"/>
+        <TextBlock Text="In Progress" FontWeight="Bold" FontSize="16" Margin="0,0,0,5" Grid.Column="1" VerticalAlignment="Top"/>
+        <TextBlock Text="Done" FontWeight="Bold" FontSize="16" Margin="0,0,0,5" Grid.Column="2" VerticalAlignment="Top"/>
     </Grid>
+
 </Window>
