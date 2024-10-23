@@ -12,7 +12,7 @@ public class Program
 
     private static TcpListener server;
     private static List<TcpClient> clients = new List<TcpClient>();
-    private static List<string> tasks = new List<string>();
+    private static List<TaskItem> tasks = new List<TaskItem>();
     public static void Main(string[] args)
     {
         server = new TcpListener(IPAddress.Any, 1234);
@@ -50,7 +50,7 @@ public class Program
         byte[] buffer = new byte[1500];
 
         //TODO make whileloop exitable
-        while (true)
+        while (tcpClient.Connected)
         {
             NetworkJsonObject? networkJsonObject = await ClientServerUtils.ReadNetWorkJsonObject(stream);
             if (networkJsonObject == null)
@@ -81,23 +81,22 @@ public class Program
             }
 
         }
+        Console.WriteLine("connection closed");
     }
 
     private static void AddTask(TaskItem task) {
-        tasks.Add(JsonConvert.SerializeObject(task));
-        //BroadcastUpdate();
+        tasks.Add(task);
+        BroadcastUpdate();
     }
 
-    
-    //private static void BroadcastUpdate()
-    //{
-    //    string json = JsonConvert.SerializeObject(tasks);
-    //    byte[] data = Encoding.ASCII.GetBytes(json);
 
-    //    foreach (var client in clients)
-    //    {
-    //        NetworkStream stream = client.GetStream();
-    //        stream.Write(data, 0, data.Length);
-    //    }
-    //}
+    private static void BroadcastUpdate()
+    {
+        NetworkJsonObject networkJsonObject = new NetworkJsonObject() { Status = StatusType.Get, Items = tasks.ToArray() };
+
+        foreach (var client in clients)
+        {
+            ClientServerUtils.SendNetworkJsonObject(client.GetStream(), networkJsonObject); 
+        }
+    }
 }
