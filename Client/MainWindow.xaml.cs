@@ -39,6 +39,11 @@ namespace Client
             DoneItems = new ObservableCollection<string>() { "Task 4" };
             DataContext = this;
 
+            //TESTING
+            NetworkManager instance = NetworkManager.Instance;
+            instance.ConnectTcpClient("localhost", 1234);
+            instance.sendTest();
+
             loadFromFile();
         }
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)

@@ -1,11 +1,11 @@
-﻿
-
+﻿using ClientServerUtilsSharedProject;
 using Newtonsoft.Json;
-using Server;
 using System.Net;
 using System.Net.Http;
 using System.Net.Sockets;
 using System.Text;
+
+namespace Server;
 
 public class Program
 {
@@ -19,57 +19,85 @@ public class Program
         server.Start();
         Console.WriteLine("server started");
 
-        server.BeginAcceptTcpClient(new AsyncCallback(onConnection), null);
 
-    }
-
-    public static void onConnection(IAsyncResult ar) { 
-        TcpClient client = server.EndAcceptTcpClient(ar);
-        Task.Run(() => { ListenForMessages(client); });
-        server.BeginAcceptTcpClient(new AsyncCallback(onConnection), null);
-    }
-
-    private static void ListenForMessages(TcpClient tcpClient)
-    {
-        NetworkStream stream = tcpClient.GetStream();
-        byte[] buffer = new byte[1500];
         while (true)
         {
             try
             {
-                int byteCount = stream.Read(buffer, 0, buffer.Length);
-                
-                if (byteCount == 0) return; // Client disconnected
-
-                string jsonString = Encoding.ASCII.GetString(buffer, 0, byteCount);
-                TaskItem task = JsonConvert.DeserializeObject<TaskItem>(jsonString);
-                if (task.status == "add") {
-                    AddTask(task);
-                }
-                Console.WriteLine($"Task Name: {task.Name}");
-            }
-            catch (Exception ex)
+                var tcpClient = server.AcceptTcpClient();
+                Task.Run(() => { ListenForMessages(tcpClient); });
+            } catch (Exception exp)
             {
-                Console.WriteLine(ex.Message);  
-                break;
+                Console.WriteLine(exp.ToString());
             }
+        }
+
+        //server.BeginAcceptTcpClient(new AsyncCallback(onConnection), null);
+
+    }
+
+    //TODO: see if can make work again
+    //public static void onConnection(IAsyncResult ar) { 
+    //    TcpClient client = server.EndAcceptTcpClient(ar);
+    //    clients.Add(client);
+    //    Task.Run(() => { ListenForMessages(client); });
+    //    server.BeginAcceptTcpClient(new AsyncCallback(onConnection), null);
+    //}
+
+    private static async void ListenForMessages(TcpClient tcpClient)
+    {
+        NetworkStream stream = tcpClient.GetStream();
+        byte[] buffer = new byte[1500];
+
+        //TODO make whileloop exitable
+        while (true)
+        {
+            NetworkJsonObject? networkJsonObject = await ClientServerUtils.ReadNetWorkJsonObject(stream);
+            if (networkJsonObject == null)
+            {
+                Console.WriteLine($"a faulty networkJsonObject was recieved");
+                continue;
+            }
+            StatusType type = networkJsonObject.Status;
+            switch (type) {
+                case StatusType.Add:
+                    if (networkJsonObject.Items.Length == 0)
+                    {
+                        Console.WriteLine("no taksItems where added in a Add message");
+                    }
+                    TaskItem taskItem = networkJsonObject.Items[0];
+                    AddTask(networkJsonObject.Items[0]);
+                    Console.WriteLine(taskItem.Name);
+                    break;
+                case StatusType.Remove:
+                    //TODO implement
+                    break;
+                case StatusType.Edit:
+                    //TODO implement
+                    break;
+                case StatusType.Get:
+                    //TODO implement
+                    break;
+            }
+
         }
     }
 
     private static void AddTask(TaskItem task) {
         tasks.Add(JsonConvert.SerializeObject(task));
-        BroadcastUpdate();
+        //BroadcastUpdate();
     }
 
-    private static void BroadcastUpdate()
-    {
-        string json = JsonConvert.SerializeObject(tasks);
-        byte[] data = Encoding.ASCII.GetBytes(json);
+    
+    //private static void BroadcastUpdate()
+    //{
+    //    string json = JsonConvert.SerializeObject(tasks);
+    //    byte[] data = Encoding.ASCII.GetBytes(json);
 
-        foreach (var client in clients)
-        {
-            NetworkStream stream = client.GetStream();
-            stream.Write(data, 0, data.Length);
-        }
-    }
+    //    foreach (var client in clients)
+    //    {
+    //        NetworkStream stream = client.GetStream();
+    //        stream.Write(data, 0, data.Length);
+    //    }
+    //}
 }
