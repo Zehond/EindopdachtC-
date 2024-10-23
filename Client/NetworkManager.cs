@@ -102,7 +102,7 @@ namespace Client
         //TESTCODE
         public void sendTest()
         {
-            TaskItem taskItem = new TaskItem() { Id = "-1", Name = "testing task", Description = "testing task description", status = "add"};
+            TaskItem taskItem = new TaskItem() { Id = "-1", Name = "testing task", Description = "testing task description"};
             sendAddTask(taskItem);
         }
             
