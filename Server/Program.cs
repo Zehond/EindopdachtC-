@@ -12,7 +12,7 @@ public class Program
 
     private static TcpListener server;
     private static List<TcpClient> clients = new List<TcpClient>();
-    private static List<TaskItem> tasks = new List<TaskItem>();
+    private static List<TaskItem> tasksItems = new List<TaskItem>();
     public static void Main(string[] args)
     {
         server = new TcpListener(IPAddress.Any, 1234);
@@ -85,14 +85,14 @@ public class Program
     }
 
     private static void AddTask(TaskItem task) {
-        tasks.Add(task);
+        tasksItems.Add(task);
         BroadcastUpdate();
     }
 
 
     private static void BroadcastUpdate()
     {
-        NetworkJsonObject networkJsonObject = new NetworkJsonObject() { Status = StatusType.Get, Items = tasks.ToArray() };
+        NetworkJsonObject networkJsonObject = new NetworkJsonObject() { Status = StatusType.Get, Items = tasksItems.ToArray() };
 
         foreach (var client in clients)
         {
