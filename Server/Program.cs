@@ -19,6 +19,8 @@ public class Program
     
     public static void Main(string[] args)
     {
+        loadFromFile();
+
         server = new TcpListener(IPAddress.Any, 1234);
         server.Start();
         Console.WriteLine("server started");
@@ -97,7 +99,7 @@ public class Program
     private static void AddTask(TaskItem task)
     {
         tasksItems.Add(task);
-        Console.WriteLine($"task added = id: {task.Id}, name: {task.Name}, description: {task.Description}");
+        Console.WriteLine($"task added = id: {task.Id}, name: {task.Name}, description: {task.Description}, state = {task.State.ToString()}");
         BroadcastUpdate();
         saveToFile();
     }
@@ -106,7 +108,7 @@ public class Program
     {
         string taskId = task.Id;
         tasksItems.RemoveAll(tasksItem => tasksItem.Id == taskId);
-        Console.WriteLine($"removed task = id: {task.Id}, name: {task.Name}, description: {task.Description}");
+        Console.WriteLine($"removed task = id: {task.Id}, name: {task.Name}, description: {task.Description}, state = {task.State.ToString()}");
         BroadcastUpdate();
         saveToFile();
     }
@@ -119,12 +121,12 @@ public class Program
         {
             tasksItems[index] = task;
             Console.WriteLine($"edited task = id: {existingTaskItem.Id}, name: {existingTaskItem.Name}, description: {existingTaskItem.Description}");
-            Console.WriteLine($"into task = id: {task.Id}, name: {task.Name}, description: {task.Description}");
+            Console.WriteLine($"into task = id: {task.Id}, name: {task.Name}, description: {task.Description}, state = {task.State.ToString()}");
             BroadcastUpdate();
             saveToFile();
         } else
         {
-            Console.WriteLine($"failed attempt to edit task = id: {task.Id}, name: {task.Name}, description: {task.Description}");
+            Console.WriteLine($"failed attempt to edit task = id: {task.Id}, name: {task.Name}, description: {task.Description}, state = {task.State.ToString()}");
         }
     }
 
@@ -153,7 +155,7 @@ public class Program
         string path = Path.Combine(werkdirectory, SAVE_FILE_NAME);
         File.WriteAllText(path, jsonTasks);
         
-        Console.WriteLine($"Bestand opgeslagen in: {path}");
+        Console.WriteLine($"tasks saved in file: {path}");
     }
 
     private static void loadFromFile()
@@ -163,6 +165,12 @@ public class Program
             {
                 string json = File.ReadAllText(SAVE_FILE_NAME);
                 tasksItems = JsonConvert.DeserializeObject<List<TaskItem>>(json) ?? [];
+
+                Console.WriteLine("tasks loaded from file:");
+                foreach (var taskItem in tasksItems)
+                {
+                    Console.WriteLine($"task loaded = id: {taskItem.Id}, name: {taskItem.Name}, description: {taskItem.Description}, state = {taskItem.State.ToString()}");
+                }
             }
         }
     }
