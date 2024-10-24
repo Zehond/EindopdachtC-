@@ -122,6 +122,19 @@ namespace Client
                     else if (InProgressItems.Contains(task)) InProgressItems.Remove(task);
                     else if (DoneItems.Contains(task)) DoneItems.Remove(task);
 
+                    if (listBox == ToDoListBox)
+                    {
+                        task.State = TaskItem.TaskState.ToDo;
+                    }
+                    else if (listBox == InProgressListBox)
+                    {
+                        task.State = TaskItem.TaskState.Progress;
+                    }
+                    else if (listBox == DoneListBox)
+                    {
+                        task.State = TaskItem.TaskState.Done;
+                    }
+
                     targetList.Add(task);
                 }
                 listBox.Items.Refresh();
