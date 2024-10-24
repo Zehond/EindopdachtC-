@@ -43,18 +43,15 @@ namespace Client
             DoneItems = new ObservableCollection<TaskItem>();
             DataContext = this;
 
-            
-            StartNetworkManager();
+
+            OpenNetworkManagerConnectDialog();
             networkManager.TasksUpdated += OnTasksUpdated;
         }
 
-        private void StartNetworkManager()
+        private void OpenNetworkManagerConnectDialog()
         {
             var dialog = new ConnectDialog();
-            if (dialog.ShowDialog() == true)
-            {
-
-            } else
+            if (dialog.ShowDialog() == false)
             {
                 Close();
             }
