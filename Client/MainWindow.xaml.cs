@@ -87,8 +87,9 @@ namespace Client
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            saveToFile();
+            //TODO remove if needed
         }
+
         /// <summary>
         /// deze methode start het drag en drop proces wanneer de muis wordt ingedrukt en bewogen
         /// </summary>
@@ -253,55 +254,6 @@ namespace Client
 
             var index = targetList.IndexOf(task);
             targetList[index] = task;
-        }
-
-        private void saveToFile()
-        {
-            var tasks = new
-            {
-                TodoItems,
-                InProgressItems,
-                DoneItems
-            };
-
-            string jsonTasks = JsonConvert.SerializeObject(tasks, Formatting.Indented);
-            string werkdirectory = Environment.CurrentDirectory;
-            string path = Path.Combine(werkdirectory, "TaskInJsonFormatCBD.json");
-            MessageBox.Show("Bestand opgeslagen in: " + path);
-
-            File.WriteAllText(path, jsonTasks);
-
-
-        }
-        private void loadFromFile()
-        {
-            if (File.Exists("TaskInJsonFormatCBD.json"))
-            {
-                {
-                    string json = File.ReadAllText("TaskInJsonFormatCBD.json");
-                    var tasks = JsonConvert.DeserializeObject<dynamic>(json);
-
-                    TodoItems.Clear();
-                    foreach (var item in tasks.TodoItems)
-                    {
-                        TodoItems.Add(item.ToString());
-                    }
-
-                    InProgressItems.Clear();
-                    foreach (var item in tasks.InProgressItems)
-                    {
-                        InProgressItems.Add(item.ToString());
-                    }
-
-                    DoneItems.Clear();
-                    foreach (var item in tasks.DoneItems)
-                    {
-                        DoneItems.Add(item.ToString());
-
-                    }
-
-                }
-            }
         }
     }
 }

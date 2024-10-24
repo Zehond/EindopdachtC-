@@ -4,11 +4,14 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Sockets;
 using System.Text;
+using System.Text.Json.Nodes;
+using System.Threading.Tasks;
 
 namespace Server;
 
 public class Program
 {
+    private const string SAVE_FILE_NAME = "TaskInJsonFormatCBD.json";
 
     private static TcpListener server;
     private static List<TcpClient> clients = new List<TcpClient>();
@@ -26,7 +29,6 @@ public class Program
             {
                 var tcpClient = server.AcceptTcpClient();
                 Console.WriteLine($"client connected = {tcpClient.Client.RemoteEndPoint}");
-                //Console.WriteLine($"client connected = {IPAddress.Parse(((IPEndPoint)tcpClient.Client.RemoteEndPoint).Address.ToString())}");
                 Task.Run(() => { ListenForMessages(tcpClient); });
             } catch (Exception exp)
             {
@@ -104,6 +106,7 @@ public class Program
         tasksItems.Add(task);
         Console.WriteLine($"task added = id: {task.Id}, name: {task.Name}, description: {task.Description}");
         BroadcastUpdate();
+        saveToFile();
     }
 
     private static void RemoveTask(TaskItem task)
@@ -112,6 +115,7 @@ public class Program
         tasksItems.RemoveAll(tasksItem => tasksItem.Id == taskId);
         Console.WriteLine($"removed task = id: {task.Id}, name: {task.Name}, description: {task.Description}");
         BroadcastUpdate();
+        saveToFile();
     }
 
     private static void EditTask(TaskItem task)
@@ -124,6 +128,7 @@ public class Program
             Console.WriteLine($"edited task = id: {existingTaskItem.Id}, name: {existingTaskItem.Name}, description: {existingTaskItem.Description}");
             Console.WriteLine($"into task = id: {task.Id}, name: {task.Name}, description: {task.Description}");
             BroadcastUpdate();
+            saveToFile();
         } else
         {
             Console.WriteLine($"failed attempt to edit task = id: {task.Id}, name: {task.Name}, description: {task.Description}");
@@ -145,5 +150,27 @@ public class Program
         Console.WriteLine($"send update to client: {tcpClient.Client.RemoteEndPoint}");
         NetworkJsonObject networkJsonObject = new NetworkJsonObject() { Status = StatusType.Get, Items = tasksItems.ToArray() };
         ClientServerUtils.SendNetworkJsonObject(tcpClient.GetStream(), networkJsonObject);
+    }
+
+    private static void saveToFile()
+    {
+        
+        string jsonTasks = JsonConvert.SerializeObject(tasksItems, Formatting.Indented);
+        string werkdirectory = Environment.CurrentDirectory;
+        string path = Path.Combine(werkdirectory, SAVE_FILE_NAME);
+        File.WriteAllText(path, jsonTasks);
+        
+        Console.WriteLine($"Bestand opgeslagen in: {path}");
+    }
+
+    private static void loadFromFile()
+    {
+        if (File.Exists(SAVE_FILE_NAME))
+        {
+            {
+                string json = File.ReadAllText(SAVE_FILE_NAME);
+                tasksItems = JsonConvert.DeserializeObject<List<TaskItem>>(json) ?? [];
+            }
+        }
     }
 }
