@@ -29,7 +29,9 @@ public class Program
             {
                 var tcpClient = server.AcceptTcpClient();
                 Console.WriteLine($"client connected = {tcpClient.Client.RemoteEndPoint}");
+                clients.Add(tcpClient);
                 Task.Run(() => { ListenForMessages(tcpClient); });
+                Console.WriteLine($"connections open: {clients.Count}");
             } catch (Exception exp)
             {
                 Console.WriteLine(exp.ToString());
@@ -88,6 +90,8 @@ public class Program
 
         //exited whileloop: connection closed
         Console.WriteLine("connection closed");
+        clients.Remove(tcpClient);
+        Console.WriteLine($"connections open: {clients.Count}");
     }
 
     private static void AddTask(TaskItem task)
