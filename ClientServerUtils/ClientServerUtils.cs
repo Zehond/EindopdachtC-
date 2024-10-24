@@ -19,18 +19,12 @@ namespace ClientServerUtilsSharedProject
             networkStream.Write(bytes, 0, bytes.Length);
         }
 
-        //TODO possible touple to see if network is disconnected or just an exeption
         public static async Task<NetworkJsonObject?> ReadNetWorkJsonObject(NetworkStream networkStream)
         {
             byte[] buffer = new byte[BUFFER_SIZE];
             try
             {
                 int byteCount = await networkStream.ReadAsync(buffer, 0, buffer.Length);
-
-                if (byteCount == 0)
-                {
-                    return null; // Client disconnected
-                }
 
                 string jsonString = Encoding.ASCII.GetString(buffer, 0, byteCount);
                 return JsonConvert.DeserializeObject<NetworkJsonObject>(jsonString);

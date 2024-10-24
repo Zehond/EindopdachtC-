@@ -35,18 +35,7 @@ public class Program
                 Console.WriteLine(exp.ToString());
             }
         }
-
-        //server.BeginAcceptTcpClient(new AsyncCallback(onConnection), null);
-
     }
-
-    //TODO: see if can make work again
-    //public static void onConnection(IAsyncResult ar) { 
-    //    TcpClient client = server.EndAcceptTcpClient(ar);
-    //    clients.Add(client);
-    //    Task.Run(() => { ListenForMessages(client); });
-    //    server.BeginAcceptTcpClient(new AsyncCallback(onConnection), null);
-    //}
 
     private static async void ListenForMessages(TcpClient tcpClient)
     {
@@ -58,7 +47,7 @@ public class Program
             NetworkJsonObject? networkJsonObject = await ClientServerUtils.ReadNetWorkJsonObject(stream);
             if (networkJsonObject == null)
             {
-                Console.WriteLine($"a faulty networkJsonObject was recieved");
+                Console.WriteLine($"a faulty networkJsonObject was recieved, Possible disconnect");
                 continue;
             }
 

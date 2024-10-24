@@ -35,9 +35,8 @@ namespace Client
             }
         }
 
-        // TODO: fix summery: "listening code"
         /// <summary>
-        /// sends a message to request all taskItems from server, recieve automatically via de listening code, make sure the server is connected
+        /// sends a message to request all taskItems from server, recieve automatically via de TasksUpdate Action, make sure the server is connected
         /// </summary>
         public void getAllTask()
         {
@@ -78,13 +77,12 @@ namespace Client
 
         private async void listenToServer()
         {
-            //TODO might crash, needs testing
             while (isConnected)
             {
                 NetworkJsonObject? networkJsonObject = await ClientServerUtils.ReadNetWorkJsonObject(tcpClient.GetStream());
                 if (networkJsonObject == null)
                 {
-                    Console.WriteLine($"a faulty networkJsonObject was recieved");
+                    //most likely network broken, still continue instead of break just because the object could be broeken
                     continue;
                 }
                 if (networkJsonObject.Status == StatusType.Get)
@@ -92,14 +90,15 @@ namespace Client
                     TaskItem[] taskItems = networkJsonObject.Items;
                     if (taskItems.Length == 0)
                     {
+                        //TODO no items found, react 
                         continue;
-                        //TODO make UI react to no task found
                     }
-                    //TODO trigger event that makes UI read all found taskitems
                     List<TaskItem> tasklist = new List<TaskItem>(taskItems);
                     TasksUpdated?.Invoke(tasklist);
                 }
             }
+
+            //TODO Netwerk stopped, react
         }      
     }
 }
