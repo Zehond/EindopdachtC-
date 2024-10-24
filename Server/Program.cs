@@ -25,7 +25,8 @@ public class Program
             try
             {
                 var tcpClient = server.AcceptTcpClient();
-                Console.WriteLine($"client connected = {tcpClient}");
+                Console.WriteLine($"client connected = {tcpClient.Client.RemoteEndPoint}");
+                //Console.WriteLine($"client connected = {IPAddress.Parse(((IPEndPoint)tcpClient.Client.RemoteEndPoint).Address.ToString())}");
                 Task.Run(() => { ListenForMessages(tcpClient); });
             } catch (Exception exp)
             {
@@ -141,7 +142,7 @@ public class Program
 
     private static void SendClientUpdate(TcpClient tcpClient)
     {
-        Console.WriteLine($"send update to client: {tcpClient}");
+        Console.WriteLine($"send update to client: {tcpClient.Client.RemoteEndPoint}");
         NetworkJsonObject networkJsonObject = new NetworkJsonObject() { Status = StatusType.Get, Items = tasksItems.ToArray() };
         ClientServerUtils.SendNetworkJsonObject(tcpClient.GetStream(), networkJsonObject);
     }
