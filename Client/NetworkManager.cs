@@ -19,6 +19,8 @@ namespace Client
 
         private TcpClient tcpClient;
         public event Action<List<TaskItem>> TasksUpdated;
+        public event Action NoTasksOnServer;
+        public event Action ServerDisconnected;
         public bool isConnected { get {  return tcpClient.Connected; } }
 
         public async Task<bool> ConnectTcpClient(string ip, int port)
@@ -27,6 +29,7 @@ namespace Client
             {
                 tcpClient = new TcpClient();
                 await tcpClient.ConnectAsync(ip, port);
+                new Thread(() => { listenToServer(); }).Start();
                 return true;
             } catch (Exception ex)
             {
@@ -98,7 +101,8 @@ namespace Client
                 }
             }
 
-            //TODO Netwerk stopped, react
+            //server disconnected
+            ServerDisconnected?.Invoke();
         }      
     }
 }

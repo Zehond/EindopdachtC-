@@ -26,6 +26,11 @@ namespace ClientServerUtilsSharedProject
             {
                 int byteCount = await networkStream.ReadAsync(buffer, 0, buffer.Length);
 
+                if (byteCount == 0)
+                {
+                    return null;
+                }
+
                 string jsonString = Encoding.ASCII.GetString(buffer, 0, byteCount);
                 return JsonConvert.DeserializeObject<NetworkJsonObject>(jsonString);
                 

@@ -42,10 +42,31 @@ namespace Client
             InProgressItems = new ObservableCollection<TaskItem>();
             DoneItems = new ObservableCollection<TaskItem>();
             DataContext = this;
-
-
+            
             OpenNetworkManagerConnectDialog();
             networkManager.TasksUpdated += OnTasksUpdated;
+
+
+            // CHECKTHIS this is fucked and doesnt work, can you pls check it? operation order:
+            // start server > start client > everything should work
+            // disconect server > client reconnect window pops up
+            // start server again > reconnect on client > (currently breaks) everything should be flushed
+            networkManager.ServerDisconnected += () =>
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    OpenNetworkManagerConnectDialog();
+                });
+                networkManager.getAllTask();
+            };
+            networkManager.NoTasksOnServer += () =>
+            {
+                MessageBox.Show("No tasks found on server. Feel free to Add tasks.");
+            };
+            // END
+
+
+            networkManager.getAllTask();
         }
 
         private void OpenNetworkManagerConnectDialog()
@@ -54,6 +75,7 @@ namespace Client
             if (dialog.ShowDialog() == false)
             {
                 Close();
+                return;
             }
         }
 

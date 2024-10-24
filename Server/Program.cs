@@ -32,7 +32,7 @@ public class Program
                 var tcpClient = server.AcceptTcpClient();
                 Console.WriteLine($"client connected = {tcpClient.Client.RemoteEndPoint}");
                 clients.Add(tcpClient);
-                Task.Run(() => { ListenForMessages(tcpClient); });
+                new Thread(() => { ListenForMessages(tcpClient); }).Start();
                 Console.WriteLine($"connections open: {clients.Count}");
             } catch (Exception exp)
             {
