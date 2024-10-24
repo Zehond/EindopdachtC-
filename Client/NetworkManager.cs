@@ -96,15 +96,6 @@ namespace Client
                     //TODO trigger event that makes UI read all found taskitems
                 }
             }
-        }
-
-
-        //TESTCODE
-        public void sendTest()
-        {
-            TaskItem taskItem = new TaskItem() { Id = "-1", Name = "testing task", Description = "testing task description"};
-            sendAddTask(taskItem);
-        }
-            
+        }      
     }
 }

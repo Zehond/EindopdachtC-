@@ -42,7 +42,6 @@ namespace Client
             //TESTING
             NetworkManager instance = NetworkManager.Instance;
             instance.ConnectTcpClient("localhost", 1234);
-            instance.sendTest();
 
             loadFromFile();
         }
