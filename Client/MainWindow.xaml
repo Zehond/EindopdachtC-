@@ -18,16 +18,23 @@
         <ListBox Name="ToDoListBox" Grid.Column="0" AllowDrop="True" Drop="ListBox_Drop" DragOver="ListBox_DragOver" ItemsSource="{Binding TodoItems}" Margin="0,22,0,0">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <TextBlock Text="{Binding}" MouseMove="ListBoxItem_MouseMove" />
+                    <StackPanel>
+                        <TextBlock Text="{Binding Name}" MouseMove="ListBoxItem_MouseMove" />
+                        <TextBlock Text="{Binding Description}" MouseMove="ListBoxItem_MouseMove" FontStyle="Italic" FontSize="12" />
+                    </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
+
 
         <!-- In Progress Column -->
         <ListBox Name="InProgressListBox" Grid.Column="1" AllowDrop="True" Drop="ListBox_Drop" DragOver="ListBox_DragOver" ItemsSource="{Binding InProgressItems}" Margin="0,22,0,0">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <TextBlock Text="{Binding}" MouseMove="ListBoxItem_MouseMove" />
+                    <StackPanel>
+                    <TextBlock Text="{Binding Name}" MouseMove="ListBoxItem_MouseMove" />
+                        <TextBlock Text="{Binding Description}" MouseMove="ListBoxItem_MouseMove" FontStyle="Italic" FontSize="12" />
+                    </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
@@ -36,7 +43,10 @@
         <ListBox Name="DoneListBox" Grid.Column="2" AllowDrop="True" Drop="ListBox_Drop" DragOver="ListBox_DragOver" ItemsSource="{Binding DoneItems}" Margin="0,22,0,0">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <TextBlock Text="{Binding}" MouseMove="ListBoxItem_MouseMove" />
+                    <StackPanel>
+                        <TextBlock Text="{Binding Name}" MouseMove="ListBoxItem_MouseMove" />
+                        <TextBlock Text="{Binding Description}" MouseMove="ListBoxItem_MouseMove" FontStyle="Italic" FontSize="12" />
+                    </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
@@ -44,6 +54,13 @@
         <TextBlock Text="To Do" FontWeight="Bold" FontSize="16" Margin="0,0,0,5" Grid.Column="0" VerticalAlignment="Top"/>
         <TextBlock Text="In Progress" FontWeight="Bold" FontSize="16" Margin="0,0,0,5" Grid.Column="1" VerticalAlignment="Top"/>
         <TextBlock Text="Done" FontWeight="Bold" FontSize="16" Margin="0,0,0,5" Grid.Column="2" VerticalAlignment="Top"/>
+
+
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="170,-4,0,0" Grid.Column="1">
+            <Button Content="Add Task" Click="AddTask_Click" Margin="5"/>
+            <Button Content="Remove Task" Click="RemoveTask_Click" Margin="5"/>
+            <Button Content="Edit Task" Click="EditTask_Click" Margin="5"/>
+        </StackPanel>
     </Grid>
 
 </Window>
