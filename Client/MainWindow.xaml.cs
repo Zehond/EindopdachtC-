@@ -33,7 +33,7 @@ namespace Client
         public ObservableCollection<TaskItem> TodoItems { get; set; }
         public ObservableCollection<TaskItem> InProgressItems { get; set; }
         public ObservableCollection<TaskItem> DoneItems { get; set; }
-        private NetworkManager networkManager;
+        private NetworkManager networkManager = NetworkManager.Instance;
 
         public MainWindow()
         {
@@ -43,13 +43,23 @@ namespace Client
             DoneItems = new ObservableCollection<TaskItem>();
             DataContext = this;
 
-            //TESTING
-            //NetworkManager instance = NetworkManager.Instance;
-            //instance.ConnectTcpClient("localhost", 1234);
+            
+            StartNetworkManager();
             networkManager.TasksUpdated += OnTasksUpdated;
-
-
         }
+
+        private void StartNetworkManager()
+        {
+            var dialog = new ConnectDialog();
+            if (dialog.ShowDialog() == true)
+            {
+
+            } else
+            {
+                Close();
+            }
+        }
+
         private void OnTasksUpdated(List<TaskItem> taskItems)
         {
             Application.Current.Dispatcher.Invoke(() =>

@@ -21,16 +21,17 @@ namespace Client
         public event Action<List<TaskItem>> TasksUpdated;
         public bool isConnected { get {  return tcpClient.Connected; } }
 
-        public void ConnectTcpClient(string ip, int port)
+        public async Task<bool> ConnectTcpClient(string ip, int port)
         {
             try
             {
-                tcpClient = new TcpClient(ip, port);
-
+                tcpClient = new TcpClient();
+                await tcpClient.ConnectAsync(ip, port);
+                return true;
             } catch (Exception ex)
             {
                 //TCP connection failed
-                //TODO make the program react
+                return false;
             }
         }
 
