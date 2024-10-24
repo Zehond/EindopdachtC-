@@ -12,14 +12,12 @@ namespace ClientServerUtilsSharedProject
     {
         private const int BUFFER_SIZE = 1500;
 
-
         public static void SendNetworkJsonObject(NetworkStream networkStream, NetworkJsonObject networkJsonObject)
         {
             string serialisedJsonStr = JsonConvert.SerializeObject(networkJsonObject);
             byte[] bytes = Encoding.ASCII.GetBytes(serialisedJsonStr);
             networkStream.Write(bytes, 0, bytes.Length);
         }
-
 
         //TODO possible touple to see if network is disconnected or just an exeption
         public static async Task<NetworkJsonObject?> ReadNetWorkJsonObject(NetworkStream networkStream)
