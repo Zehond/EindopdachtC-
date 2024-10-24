@@ -109,7 +109,8 @@ namespace Client
                 {
                     Id = taskIdCounter.ToString(),
                     Name = dialog.TaskName,
-                    Description = dialog.TaskDescription
+                    Description = dialog.TaskDescription,
+                    State = TaskItem.TaskState.ToDo
                 };
                 taskIdCounter++;
                 AddTask(task);
