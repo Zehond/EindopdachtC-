@@ -18,6 +18,7 @@ namespace Client
         public static NetworkManager Instance { get; } = new();
 
         private TcpClient tcpClient;
+        public event Action<List<TaskItem>> TasksUpdated;
         public bool isConnected { get {  return tcpClient.Connected; } }
 
         public void ConnectTcpClient(string ip, int port)
@@ -94,6 +95,8 @@ namespace Client
                         //TODO make UI react to no task found
                     }
                     //TODO trigger event that makes UI read all found taskitems
+                    List<TaskItem> tasklist = new List<TaskItem>(taskItems);
+                    TasksUpdated?.Invoke(tasklist);
                 }
             }
         }      

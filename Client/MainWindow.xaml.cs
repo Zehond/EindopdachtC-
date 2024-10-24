@@ -33,6 +33,7 @@ namespace Client
         public ObservableCollection<TaskItem> TodoItems { get; set; }
         public ObservableCollection<TaskItem> InProgressItems { get; set; }
         public ObservableCollection<TaskItem> DoneItems { get; set; }
+        private NetworkManager networkManager;
 
         public MainWindow()
         {
@@ -43,11 +44,40 @@ namespace Client
             DataContext = this;
 
             //TESTING
-            NetworkManager instance = NetworkManager.Instance;
-            instance.ConnectTcpClient("localhost", 1234);
+            //NetworkManager instance = NetworkManager.Instance;
+            //instance.ConnectTcpClient("localhost", 1234);
+            networkManager.TasksUpdated += OnTasksUpdated;
 
-      
+
         }
+        private void OnTasksUpdated(List<TaskItem> taskItems)
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                TodoItems.Clear();
+                InProgressItems.Clear();
+                DoneItems.Clear();
+
+                foreach (var task in taskItems)
+                {
+                    // Verdeel de taken over de juiste lijsten
+                    switch (task.State)
+                    {
+                        case TaskItem.TaskState.ToDo:
+                            TodoItems.Add(task);
+                            break;
+                        case TaskItem.TaskState.Progress:
+                            InProgressItems.Add(task);
+                            break;
+                        case TaskItem.TaskState.Done:
+                            DoneItems.Add(task);
+                            break;
+                    }
+                }
+            });
+
+        }
+
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             saveToFile();
@@ -110,7 +140,7 @@ namespace Client
                     Id = taskIdCounter.ToString(),
                     Name = dialog.TaskName,
                     Description = dialog.TaskDescription,
-                    State = TaskItem.TaskState.ToDo
+                    State = TaskItem.TaskState.ToDo// todo make state change depending where it is
                 };
                 taskIdCounter++;
                 AddTask(task);
