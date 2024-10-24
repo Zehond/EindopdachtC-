@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+using ClientServerUtilsSharedProject;
+using Newtonsoft.Json;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -15,6 +16,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 
 
+
+
 namespace Client
 {
     /// <summary>
@@ -27,39 +30,39 @@ namespace Client
         /// <summary>
         /// ObservableCollection zorgt ervoor dat de UI automatisch wordt bijgewerkt wanneer een taak wordt verplaatst.
         /// </summary>
-        public ObservableCollection<string> TodoItems { get; set; }
-        public ObservableCollection<string> InProgressItems { get; set; }
-        public ObservableCollection<string> DoneItems { get; set; }
+        public ObservableCollection<TaskItem> TodoItems { get; set; }
+        public ObservableCollection<TaskItem> InProgressItems { get; set; }
+        public ObservableCollection<TaskItem> DoneItems { get; set; }
 
         public MainWindow()
         {
             InitializeComponent();
-            TodoItems = new ObservableCollection<string>() { "Task 1", "Task 2" };
-            InProgressItems = new ObservableCollection<string>() { "Task 3" };
-            DoneItems = new ObservableCollection<string>() { "Task 4" };
+            TodoItems = new ObservableCollection<TaskItem>();
+            InProgressItems = new ObservableCollection<TaskItem>();
+            DoneItems = new ObservableCollection<TaskItem>();
             DataContext = this;
 
             //TESTING
             NetworkManager instance = NetworkManager.Instance;
             instance.ConnectTcpClient("localhost", 1234);
 
-            loadFromFile();
+      
         }
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             saveToFile();
         }
-            /// <summary>
-            /// deze methode start het drag en drop proces wanneer de muis wordt ingedrukt en bewogen
-            /// </summary>
-            private void ListBoxItem_MouseMove(object sender, MouseEventArgs e)
+        /// <summary>
+        /// deze methode start het drag en drop proces wanneer de muis wordt ingedrukt en bewogen
+        /// </summary>
+        private void ListBoxItem_MouseMove(object sender, MouseEventArgs e)
         {
             if (e.LeftButton == MouseButtonState.Pressed)
             {
-                TextBlock textBlock = sender as TextBlock;
-                if (textBlock != null)
+                var taskItem = ((FrameworkElement)sender).DataContext as TaskItem;
+                if (taskItem != null)
                 {
-                    DragDrop.DoDragDrop(textBlock, textBlock.Text, DragDropEffects.Move);
+                    DragDrop.DoDragDrop((DependencyObject)sender, taskItem, DragDropEffects.Move);
                 }
             }
         }
@@ -77,11 +80,11 @@ namespace Client
         /// </summary>
         private void ListBox_Drop(object sender, DragEventArgs e)
         {
-            if (e.Data.GetDataPresent(DataFormats.StringFormat))
+            if (e.Data.GetDataPresent(typeof(TaskItem)))
             {
-                string task = (string)e.Data.GetData(DataFormats.StringFormat);
-                ListBox listBox = sender as ListBox;
-                ObservableCollection<string> targetList = listBox.ItemsSource as ObservableCollection<string>;
+                var task = (TaskItem)e.Data.GetData(typeof(TaskItem));
+                var listBox = sender as ListBox;
+                var targetList = listBox.ItemsSource as ObservableCollection<TaskItem>;
 
                 if (targetList != null)
                 {
@@ -89,11 +92,118 @@ namespace Client
                     else if (InProgressItems.Contains(task)) InProgressItems.Remove(task);
                     else if (DoneItems.Contains(task)) DoneItems.Remove(task);
 
-
                     targetList.Add(task);
+                }
+                listBox.Items.Refresh();
+            }
+        }
+
+        private int taskIdCounter = 1; // Task ID counter
+
+        private void AddTask_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new AddTaskDialog();
+            if (dialog.ShowDialog() == true)
+            {
+                var task = new TaskItem
+                {
+                    Id = taskIdCounter.ToString(),
+                    Name = dialog.TaskName,
+                    Description = dialog.TaskDescription
+                };
+                taskIdCounter++;
+                AddTask(task);
+            }
+        }
+
+        private void AddTask(TaskItem task)
+        {
+            TodoItems.Add(task);
+        }
+
+        private void RemoveTask_Click(object sender, RoutedEventArgs e)
+        {
+            // Logic to remove a task
+            var selectedTask = GetSelectedTask();
+            if (selectedTask != null)
+            {
+                RemoveTask(selectedTask);
+            }
+        }
+
+        //private void EditTask_Click(object sender, RoutedEventArgs e)
+        //{
+        //    // Logic to edit a task
+        //    var selectedTask = GetSelectedTask();
+        //    if (selectedTask != null)
+        //    {
+        //        var dialog = new AddTaskDialog
+        //        {
+        //            TaskName = selectedTask.Name,
+        //            TaskDescription = selectedTask.Description
+        //        };
+
+        //        if (dialog.ShowDialog() == true)
+        //        {
+        //            selectedTask.Name = dialog.TaskName;
+        //            selectedTask.Description = dialog.TaskDescription;
+        //            EditTask(selectedTask);
+        //        }
+        //    }
+        //}
+        private void EditTask_Click(object sender, RoutedEventArgs e)
+        {
+            var selectedTask = GetSelectedTask();
+            if (selectedTask != null)
+            {
+                var dialog = new AddTaskDialog
+                {
+                    TaskName = selectedTask.Name,
+                    TaskDescription = selectedTask.Description
+                };
+
+                if (dialog.ShowDialog() == true)
+                {
+                    selectedTask.Name = dialog.TaskName;
+                    selectedTask.Description = dialog.TaskDescription;
+                    EditTask(selectedTask);
+
+                    // Refresh ListBox to reflect changes
+                    ToDoListBox.Items.Refresh();
+                    InProgressListBox.Items.Refresh();
+                    DoneListBox.Items.Refresh();
                 }
             }
         }
+
+        private TaskItem GetSelectedTask()
+        {
+            return ToDoListBox.SelectedItem as TaskItem ??
+                   InProgressListBox.SelectedItem as TaskItem ??
+                   DoneListBox.SelectedItem as TaskItem;
+
+        }
+
+        private void RemoveTask(TaskItem task)
+        {
+            //todo needs work, maybe look at ID
+            // Remove task from appropriate list
+            TodoItems.Remove(task);
+            InProgressItems.Remove(task);
+            DoneItems.Remove(task);
+        }
+
+        private void EditTask(TaskItem task)
+        {
+            // Update task locally work on also sending to server
+            var targetList = TodoItems.FirstOrDefault(t => t.Id == task.Id) != null ? TodoItems :
+                             InProgressItems.FirstOrDefault(t => t.Id == task.Id) != null ? InProgressItems :
+                             DoneItems;
+
+            var index = targetList.IndexOf(task);
+            targetList[index] = task;
+        }
+
         private void saveToFile()
         {
             var tasks = new
