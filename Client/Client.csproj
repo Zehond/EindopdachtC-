@@ -12,4 +12,6 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 
+  <Import Project="..\ClientServerUtils\ClientServerUtils.projitems" Label="Shared" />
+
 </Project>
