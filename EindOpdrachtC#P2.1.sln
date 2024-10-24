@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35222.181
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server", "Server\Server.csproj", "{3D72296A-2734-43DF-AE41-B27E14224475}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Server", "Server\Server.csproj", "{3D72296A-2734-43DF-AE41-B27E14224475}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client", "Client\Client.csproj", "{57E5E91E-F738-4CF5-B624-9B59672BEE5E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Client", "Client\Client.csproj", "{57E5E91E-F738-4CF5-B624-9B59672BEE5E}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "ClientServerSharedProject", "ClientServerUtils\ClientServerSharedProject.shproj", "{4EA3988C-7A0A-4AF7-930B-76962307C2BF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,5 +29,10 @@ Global
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FAAC6965-B7D2-468D-82A3-490FA27A9F02}
+	EndGlobalSection
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		ClientServerUtils\ClientServerUtils.projitems*{3d72296a-2734-43df-ae41-b27e14224475}*SharedItemsImports = 5
+		ClientServerUtils\ClientServerUtils.projitems*{4ea3988c-7a0a-4af7-930b-76962307c2bf}*SharedItemsImports = 13
+		ClientServerUtils\ClientServerUtils.projitems*{57e5e91e-f738-4cf5-b624-9b59672bee5e}*SharedItemsImports = 5
 	EndGlobalSection
 EndGlobal
