@@ -55,7 +55,11 @@ namespace Client
             {
                 Application.Current.Dispatcher.Invoke(() =>
                 {
+                    TodoItems.Clear();
+                    InProgressItems.Clear();
+                    DoneItems.Clear();
                     OpenNetworkManagerConnectDialog();
+                    networkManager = NetworkManager.Instance;
                 });
                 networkManager.getAllTask();
             };
@@ -166,8 +170,10 @@ namespace Client
                     }
 
                     targetList.Add(task);
+                    listBox.Items.Refresh();
+                    networkManager.sendEditTask(task);
                 }
-                listBox.Items.Refresh();
+              
             }
         }
 
@@ -183,17 +189,14 @@ namespace Client
                     Id = taskIdCounter.ToString(),
                     Name = dialog.TaskName,
                     Description = dialog.TaskDescription,
-                    State = TaskItem.TaskState.ToDo// todo make state change depending where it is
+                    State = TaskItem.TaskState.ToDo
                 };
                 taskIdCounter++;
                 AddTask(task);
             }
         }
 
-        private void AddTask(TaskItem task)
-        {
-            TodoItems.Add(task);
-        }
+     
 
         private void RemoveTask_Click(object sender, RoutedEventArgs e)
         {
@@ -205,26 +208,7 @@ namespace Client
             }
         }
 
-        //private void EditTask_Click(object sender, RoutedEventArgs e)
-        //{
-        //    // Logic to edit a task
-        //    var selectedTask = GetSelectedTask();
-        //    if (selectedTask != null)
-        //    {
-        //        var dialog = new AddTaskDialog
-        //        {
-        //            TaskName = selectedTask.Name,
-        //            TaskDescription = selectedTask.Description
-        //        };
-
-        //        if (dialog.ShowDialog() == true)
-        //        {
-        //            selectedTask.Name = dialog.TaskName;
-        //            selectedTask.Description = dialog.TaskDescription;
-        //            EditTask(selectedTask);
-        //        }
-        //    }
-        //}
+       
         private void EditTask_Click(object sender, RoutedEventArgs e)
         {
             var selectedTask = GetSelectedTask();
@@ -257,7 +241,11 @@ namespace Client
                    DoneListBox.SelectedItem as TaskItem;
 
         }
-
+        private void AddTask(TaskItem task)
+        {
+            TodoItems.Add(task);
+            networkManager.sendAddTask(task);
+        }
         private void RemoveTask(TaskItem task)
         {
             //todo needs work, maybe look at ID
@@ -265,6 +253,7 @@ namespace Client
             TodoItems.Remove(task);
             InProgressItems.Remove(task);
             DoneItems.Remove(task);
+            networkManager.sendRemoveTask(task); 
         }
 
         private void EditTask(TaskItem task)
@@ -276,6 +265,7 @@ namespace Client
 
             var index = targetList.IndexOf(task);
             targetList[index] = task;
+            networkManager.sendEditTask(task);
         }
     }
 }
