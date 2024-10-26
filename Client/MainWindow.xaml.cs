@@ -66,7 +66,8 @@ namespace Client
             {
                 Application.Current.Dispatcher.Invoke(() =>
                 {
-                    MessageBox.Show("No tasks found on server. Feel free to Add tasks.");
+                    // Actions can be done here when the board is completely empty, currently nothing happens here because getting the messagebox is annoying
+                    //MessageBox.Show("No tasks found on server. Feel free to Add tasks.");
                 });
             };
 
