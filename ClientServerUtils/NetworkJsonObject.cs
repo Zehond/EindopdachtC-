@@ -6,6 +6,7 @@ namespace ClientServerUtilsSharedProject
 {
     public enum StatusType {
         Get,
+        Empty,
         Add,
         Remove,
         Edit,

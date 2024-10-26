@@ -43,14 +43,11 @@ namespace Client
             DoneItems = new ObservableCollection<TaskItem>();
             DataContext = this;
             
+            //set up networkmanager and all event callbacks.
             OpenNetworkManagerConnectDialog();
+
             networkManager.TasksUpdated += OnTasksUpdated;
 
-
-            // CHECKTHIS this is fucked and doesnt work, can you pls check it? operation order:
-            // start server > start client > everything should work
-            // disconect server > client reconnect window pops up
-            // start server again > reconnect on client > (currently breaks) everything should be flushed
             networkManager.ServerDisconnected += () =>
             {
                 Application.Current.Dispatcher.Invoke(() =>
@@ -58,17 +55,20 @@ namespace Client
                     TodoItems.Clear();
                     InProgressItems.Clear();
                     DoneItems.Clear();
+                    MessageBox.Show("Disconnected, please reconnect.");
                     OpenNetworkManagerConnectDialog();
                     networkManager = NetworkManager.Instance;
                 });
                 networkManager.getAllTask();
             };
+
             networkManager.NoTasksOnServer += () =>
             {
-                MessageBox.Show("No tasks found on server. Feel free to Add tasks.");
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    MessageBox.Show("No tasks found on server. Feel free to Add tasks.");
+                });
             };
-            // END
-
 
             networkManager.getAllTask();
         }

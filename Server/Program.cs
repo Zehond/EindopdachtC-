@@ -147,7 +147,9 @@ public class Program
     private static void SendClientUpdate(TcpClient tcpClient)
     {
         Console.WriteLine($"send update to client: {tcpClient.Client.RemoteEndPoint}");
-        NetworkJsonObject networkJsonObject = new NetworkJsonObject() { Status = StatusType.Get, Items = tasksItems.ToArray() };
+        var tasksArray = tasksItems.ToArray();
+        NetworkJsonObject networkJsonObject;
+        networkJsonObject = new NetworkJsonObject() { Status = StatusType.Get, Items = tasksArray };
         ClientServerUtils.SendNetworkJsonObject(tcpClient.GetStream(), networkJsonObject);
     }
 

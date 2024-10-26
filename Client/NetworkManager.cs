@@ -93,7 +93,8 @@ namespace Client
                     TaskItem[] taskItems = networkJsonObject.Items;
                     if (taskItems.Length == 0)
                     {
-                        //TODO no items found, react 
+                        NoTasksOnServer.Invoke();
+                        TasksUpdated?.Invoke([]);
                         continue;
                     }
                     List<TaskItem> tasklist = new List<TaskItem>(taskItems);
