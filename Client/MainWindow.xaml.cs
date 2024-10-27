@@ -244,28 +244,30 @@ namespace Client
         }
         private void AddTask(TaskItem task)
         {
-            TodoItems.Add(task);
+            //commented code is for loaclly 
+            //TodoItems.Add(task);
             networkManager.sendAddTask(task);
         }
         private void RemoveTask(TaskItem task)
         {
+            //commented code is for loaclly 
             //todo needs work, maybe look at ID
             // Remove task from appropriate list
-            TodoItems.Remove(task);
-            InProgressItems.Remove(task);
-            DoneItems.Remove(task);
+            //TodoItems.Remove(task);
+            //InProgressItems.Remove(task);
+            //DoneItems.Remove(task);
             networkManager.sendRemoveTask(task); 
         }
 
         private void EditTask(TaskItem task)
         {
-            // Update task locally work on also sending to server
-            var targetList = TodoItems.FirstOrDefault(t => t.Id == task.Id) != null ? TodoItems :
-                             InProgressItems.FirstOrDefault(t => t.Id == task.Id) != null ? InProgressItems :
-                             DoneItems;
+            //commented code is for loaclly 
+            //var targetList = TodoItems.FirstOrDefault(t => t.Id == task.Id) != null ? TodoItems :
+            //                 InProgressItems.FirstOrDefault(t => t.Id == task.Id) != null ? InProgressItems :
+            //                 DoneItems;
 
-            var index = targetList.IndexOf(task);
-            targetList[index] = task;
+            //var index = targetList.IndexOf(task);
+            //targetList[index] = task;
             networkManager.sendEditTask(task);
         }
     }
