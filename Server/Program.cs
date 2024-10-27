@@ -98,11 +98,6 @@ public class Program
     }
     public static int GenerateUniqueId() 
     {
-        //if (tasksItems.Count == 0) {
-        //    return 1;
-        //}
-        //int maxId = tasksItems.Max(task => int.Parse(task.Id));
-        //return maxId + 1;
         if (tasksItems.Count == 0)
         {
             return 1;

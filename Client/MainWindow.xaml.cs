@@ -34,7 +34,6 @@ namespace Client
         public ObservableCollection<TaskItem> InProgressItems { get; set; }
         public ObservableCollection<TaskItem> DoneItems { get; set; }
         private NetworkManager networkManager = NetworkManager.Instance;
-
         public MainWindow()
         {
             InitializeComponent();
@@ -83,7 +82,7 @@ namespace Client
             }
         }
 
-        private void OnTasksUpdated(List<TaskItem> taskItems)
+        public void OnTasksUpdated(List<TaskItem> taskItems)
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
@@ -142,7 +141,7 @@ namespace Client
         /// <summary>
         /// handelt de drop van de item en verplaats de taak naar de andere colom. 
         /// </summary>
-        private void ListBox_Drop(object sender, DragEventArgs e)
+        public void ListBox_Drop(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent(typeof(TaskItem)))
             {
@@ -241,7 +240,7 @@ namespace Client
                    DoneListBox.SelectedItem as TaskItem;
 
         }
-        private void AddTask(TaskItem task)
+        public void AddTask(TaskItem task)
         {
             //commented code is for loaclly 
             //TodoItems.Add(task);
@@ -269,5 +268,29 @@ namespace Client
             //targetList[index] = task;
             networkManager.sendEditTask(task);
         }
+        public void SimulateDragDrop(TaskItem task, ListBox targetListBox)
+        {
+            if (TodoItems.Contains(task)) TodoItems.Remove(task);
+            else if (InProgressItems.Contains(task)) InProgressItems.Remove(task);
+            else if (DoneItems.Contains(task)) DoneItems.Remove(task);
+
+            if (targetListBox == ToDoListBox)
+            {
+                task.State = TaskItem.TaskState.ToDo;
+            }
+            else if (targetListBox == InProgressListBox)
+            {
+                task.State = TaskItem.TaskState.Progress;
+            }
+            else if (targetListBox == DoneListBox)
+            {
+                task.State = TaskItem.TaskState.Done;
+            }
+
+            targetListBox.Items.Add(task);
+            targetListBox.Items.Refresh();
+            networkManager.sendEditTask(task);
+        }
+
     }
 }
