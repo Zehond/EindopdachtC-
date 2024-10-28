@@ -77,6 +77,15 @@ namespace Client
             NetworkJsonObject networkJsonObject = new NetworkJsonObject() { Status = StatusType.Remove, Items = [taskItem] };
             ClientServerUtils.SendNetworkJsonObject(tcpClient.GetStream(), networkJsonObject);
         }
+        /// <summary>
+        /// send a message to delete all tasks with a done state, make sure the server is connected
+        /// </summary>
+        public void sendCleanAllDoneTasks() 
+        {
+            if (!isConnected) return;
+            NetworkJsonObject networkJsonObject = new NetworkJsonObject() { Status = StatusType.Clean_Done_Items, Items = Array.Empty<TaskItem>() };
+            ClientServerUtils.SendNetworkJsonObject(tcpClient.GetStream(), networkJsonObject);
+        }
 
         private async void listenToServer()
         {
