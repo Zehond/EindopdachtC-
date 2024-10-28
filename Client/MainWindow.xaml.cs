@@ -203,7 +203,7 @@ namespace Client
             }
         }
 
-       
+       //logic to edit task, by clicking the task in the list
         private void EditTask_Click(object sender, RoutedEventArgs e)
         {
             var selectedTask = GetSelectedTask();
@@ -228,7 +228,7 @@ namespace Client
                 }
             }
         }
-
+        //gets the selected item from the listbox
         private TaskItem GetSelectedTask()
         {
             return ToDoListBox.SelectedItem as TaskItem ??
@@ -236,6 +236,7 @@ namespace Client
                    DoneListBox.SelectedItem as TaskItem;
 
         }
+        //methods send the task and required protocol
         public void AddTask(TaskItem task)
         {
             networkManager.sendAddTask(task);
@@ -249,28 +250,9 @@ namespace Client
         {
             networkManager.sendEditTask(task);
         }
-        public void SimulateDragDrop(TaskItem task, ListBox targetListBox)
+        private void DeleteDoneItems(object sender, RoutedEventArgs e) 
         {
-            if (TodoItems.Contains(task)) TodoItems.Remove(task);
-            else if (InProgressItems.Contains(task)) InProgressItems.Remove(task);
-            else if (DoneItems.Contains(task)) DoneItems.Remove(task);
-
-            if (targetListBox == ToDoListBox)
-            {
-                task.State = TaskItem.TaskState.ToDo;
-            }
-            else if (targetListBox == InProgressListBox)
-            {
-                task.State = TaskItem.TaskState.Progress;
-            }
-            else if (targetListBox == DoneListBox)
-            {
-                task.State = TaskItem.TaskState.Done;
-            }
-
-            targetListBox.Items.Add(task);
-            targetListBox.Items.Refresh();
-            networkManager.sendEditTask(task);
+            networkManager.sendCleanAllDoneTasks();
         }
 
     }

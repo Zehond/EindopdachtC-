@@ -86,6 +86,10 @@ public class Program
                     Console.WriteLine("get message recieved, sending update =");
                     SendClientUpdate(tcpClient);
                     break;
+                case StatusType.Clean_Done_Items:
+                    Console.WriteLine("Cleaning the sewers, great job completing al tasks :)");
+                    CleanDoneTasks();
+                    break;
             }
 
         }
@@ -149,7 +153,7 @@ public class Program
             Console.WriteLine($"failed attempt to edit task = id: {task.Id}, name: {task.Name}, description: {task.Description}, state = {task.State.ToString()}");
         }
     }
-
+ 
 
     private static void BroadcastUpdate()
     {
@@ -195,5 +199,12 @@ public class Program
                 }
             }
         }
+    }
+
+    public static void CleanDoneTasks()
+    {
+        TasksItems.RemoveAll(task => task.State == TaskItem.TaskState.Done);
+        BroadcastUpdate();
+        saveTasksToFile(SAVE_FILE_NAME);
     }
 }

@@ -60,6 +60,9 @@
             <Button Content="Remove Task" Click="RemoveTask_Click" Margin="5"/>
             <Button Content="Edit Task" Click="EditTask_Click" Margin="5"/>
         </StackPanel>
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="50,-4,0,0" Grid.Column="2" >
+            <Button Content="Delete Done Items" Click="DeleteDoneItems" Margin="5"/>
+        </StackPanel>
     </Grid>
 
 </Window>

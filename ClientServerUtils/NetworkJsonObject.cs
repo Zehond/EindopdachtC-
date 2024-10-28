@@ -10,6 +10,7 @@ namespace ClientServerUtilsSharedProject
         Add,
         Remove,
         Edit,
+        Clean_Done_Items,
     }
 
     public class NetworkJsonObject
