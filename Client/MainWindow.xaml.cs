@@ -34,7 +34,6 @@ namespace Client
         public ObservableCollection<TaskItem> InProgressItems { get; set; }
         public ObservableCollection<TaskItem> DoneItems { get; set; }
         private NetworkManager networkManager = NetworkManager.Instance;
-
         public MainWindow()
         {
             InitializeComponent();
@@ -43,28 +42,33 @@ namespace Client
             DoneItems = new ObservableCollection<TaskItem>();
             DataContext = this;
             
+            //set up networkmanager and all event callbacks.
             OpenNetworkManagerConnectDialog();
+
             networkManager.TasksUpdated += OnTasksUpdated;
 
-
-            // CHECKTHIS this is fucked and doesnt work, can you pls check it? operation order:
-            // start server > start client > everything should work
-            // disconect server > client reconnect window pops up
-            // start server again > reconnect on client > (currently breaks) everything should be flushed
             networkManager.ServerDisconnected += () =>
             {
                 Application.Current.Dispatcher.Invoke(() =>
                 {
+                    TodoItems.Clear();
+                    InProgressItems.Clear();
+                    DoneItems.Clear();
+                    MessageBox.Show("Disconnected, please reconnect.");
                     OpenNetworkManagerConnectDialog();
+                    networkManager = NetworkManager.Instance;
                 });
                 networkManager.getAllTask();
             };
+
             networkManager.NoTasksOnServer += () =>
             {
-                MessageBox.Show("No tasks found on server. Feel free to Add tasks.");
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    // Actions can be done here when the board is completely empty, currently nothing happens here because getting the messagebox is annoying
+                    //MessageBox.Show("No tasks found on server. Feel free to Add tasks.");
+                });
             };
-            // END
-
 
             networkManager.getAllTask();
         }
@@ -79,7 +83,7 @@ namespace Client
             }
         }
 
-        private void OnTasksUpdated(List<TaskItem> taskItems)
+        public void OnTasksUpdated(List<TaskItem> taskItems)
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
@@ -138,7 +142,7 @@ namespace Client
         /// <summary>
         /// handelt de drop van de item en verplaats de taak naar de andere colom. 
         /// </summary>
-        private void ListBox_Drop(object sender, DragEventArgs e)
+        public void ListBox_Drop(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent(typeof(TaskItem)))
             {
@@ -166,8 +170,10 @@ namespace Client
                     }
 
                     targetList.Add(task);
+                    listBox.Items.Refresh();
+                    networkManager.sendEditTask(task);
                 }
-                listBox.Items.Refresh();
+              
             }
         }
 
@@ -183,17 +189,14 @@ namespace Client
                     Id = taskIdCounter.ToString(),
                     Name = dialog.TaskName,
                     Description = dialog.TaskDescription,
-                    State = TaskItem.TaskState.ToDo// todo make state change depending where it is
+                    State = TaskItem.TaskState.ToDo
                 };
                 taskIdCounter++;
                 AddTask(task);
             }
         }
 
-        private void AddTask(TaskItem task)
-        {
-            TodoItems.Add(task);
-        }
+     
 
         private void RemoveTask_Click(object sender, RoutedEventArgs e)
         {
@@ -205,26 +208,7 @@ namespace Client
             }
         }
 
-        //private void EditTask_Click(object sender, RoutedEventArgs e)
-        //{
-        //    // Logic to edit a task
-        //    var selectedTask = GetSelectedTask();
-        //    if (selectedTask != null)
-        //    {
-        //        var dialog = new AddTaskDialog
-        //        {
-        //            TaskName = selectedTask.Name,
-        //            TaskDescription = selectedTask.Description
-        //        };
-
-        //        if (dialog.ShowDialog() == true)
-        //        {
-        //            selectedTask.Name = dialog.TaskName;
-        //            selectedTask.Description = dialog.TaskDescription;
-        //            EditTask(selectedTask);
-        //        }
-        //    }
-        //}
+       
         private void EditTask_Click(object sender, RoutedEventArgs e)
         {
             var selectedTask = GetSelectedTask();
@@ -257,25 +241,57 @@ namespace Client
                    DoneListBox.SelectedItem as TaskItem;
 
         }
-
+        public void AddTask(TaskItem task)
+        {
+            //commented code is for loaclly 
+            //TodoItems.Add(task);
+            networkManager.sendAddTask(task);
+        }
         private void RemoveTask(TaskItem task)
         {
+            //commented code is for loaclly 
             //todo needs work, maybe look at ID
             // Remove task from appropriate list
-            TodoItems.Remove(task);
-            InProgressItems.Remove(task);
-            DoneItems.Remove(task);
+            //TodoItems.Remove(task);
+            //InProgressItems.Remove(task);
+            //DoneItems.Remove(task);
+            networkManager.sendRemoveTask(task); 
         }
 
         private void EditTask(TaskItem task)
         {
-            // Update task locally work on also sending to server
-            var targetList = TodoItems.FirstOrDefault(t => t.Id == task.Id) != null ? TodoItems :
-                             InProgressItems.FirstOrDefault(t => t.Id == task.Id) != null ? InProgressItems :
-                             DoneItems;
+            //commented code is for loaclly 
+            //var targetList = TodoItems.FirstOrDefault(t => t.Id == task.Id) != null ? TodoItems :
+            //                 InProgressItems.FirstOrDefault(t => t.Id == task.Id) != null ? InProgressItems :
+            //                 DoneItems;
 
-            var index = targetList.IndexOf(task);
-            targetList[index] = task;
+            //var index = targetList.IndexOf(task);
+            //targetList[index] = task;
+            networkManager.sendEditTask(task);
         }
+        public void SimulateDragDrop(TaskItem task, ListBox targetListBox)
+        {
+            if (TodoItems.Contains(task)) TodoItems.Remove(task);
+            else if (InProgressItems.Contains(task)) InProgressItems.Remove(task);
+            else if (DoneItems.Contains(task)) DoneItems.Remove(task);
+
+            if (targetListBox == ToDoListBox)
+            {
+                task.State = TaskItem.TaskState.ToDo;
+            }
+            else if (targetListBox == InProgressListBox)
+            {
+                task.State = TaskItem.TaskState.Progress;
+            }
+            else if (targetListBox == DoneListBox)
+            {
+                task.State = TaskItem.TaskState.Done;
+            }
+
+            targetListBox.Items.Add(task);
+            targetListBox.Items.Refresh();
+            networkManager.sendEditTask(task);
+        }
+
     }
 }

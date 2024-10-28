@@ -18,9 +18,9 @@ namespace Client
         public static NetworkManager Instance { get; } = new();
 
         private TcpClient tcpClient;
-        public event Action<List<TaskItem>> TasksUpdated;
-        public event Action NoTasksOnServer;
-        public event Action ServerDisconnected;
+        public event Action<List<TaskItem>>? TasksUpdated;
+        public event Action? NoTasksOnServer;
+        public event Action? ServerDisconnected;
         public bool isConnected { get {  return tcpClient.Connected; } }
 
         public async Task<bool> ConnectTcpClient(string ip, int port)
@@ -93,7 +93,8 @@ namespace Client
                     TaskItem[] taskItems = networkJsonObject.Items;
                     if (taskItems.Length == 0)
                     {
-                        //TODO no items found, react 
+                        NoTasksOnServer?.Invoke();
+                        TasksUpdated?.Invoke([]);
                         continue;
                     }
                     List<TaskItem> tasklist = new List<TaskItem>(taskItems);
