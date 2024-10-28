@@ -1,4 +1,4 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35222.181
@@ -10,6 +10,8 @@ EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "ClientServerSharedProject", "ClientServerUtils\ClientServerSharedProject.shproj", "{4EA3988C-7A0A-4AF7-930B-76962307C2BF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientTests", "ClientTests\ClientTests.csproj", "{8758EF2B-1E32-44F9-AD97-5DBFEFAC93EB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server.nUnitTest", "Server.nUnitTest\Server.nUnitTest.csproj", "{0B24E818-0F96-4A7E-9D9A-C0F8BA94A810}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,6 +31,10 @@ Global
 		{8758EF2B-1E32-44F9-AD97-5DBFEFAC93EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8758EF2B-1E32-44F9-AD97-5DBFEFAC93EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8758EF2B-1E32-44F9-AD97-5DBFEFAC93EB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0B24E818-0F96-4A7E-9D9A-C0F8BA94A810}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0B24E818-0F96-4A7E-9D9A-C0F8BA94A810}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0B24E818-0F96-4A7E-9D9A-C0F8BA94A810}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0B24E818-0F96-4A7E-9D9A-C0F8BA94A810}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
