@@ -12,7 +12,6 @@ namespace Server;
 public class Program
 {
     private const string SAVE_FILE_NAME = "TaskInJsonFormatCBD.json";
-    //private static int taskIdCounter = 1;
 
     public static TcpListener TCPServer { get; private set; }
     public static List<TcpClient> Clients { get; private set; } = new List<TcpClient>();
@@ -123,7 +122,6 @@ public class Program
         Console.WriteLine($"task added = id: {task.Id}, name: {task.Name}, description: {task.Description}, state = {task.State.ToString()}");
         BroadcastUpdate();
         saveTasksToFile(SAVE_FILE_NAME);
-        //saveCounterToFile();
     }
 
     public static void RemoveTask(TaskItem task)
@@ -180,20 +178,6 @@ public class Program
         
         Console.WriteLine($"tasks saved in file: {path}");
     }
-
-    //private static void saveCounterToFile()
-    //{
-    //    File.WriteAllText("SAVED_COUNTER", taskIdCounter.ToString());
-    //}
-
-    //private static void loadCounterFromFile()
-    //{
-    //    if (File.Exists("SAVED_COUNTER"))
-    //    {
-    //        string counter = File.ReadAllText("SAVED_COUNTER");
-    //        taskIdCounter = int.Parse(counter);
-    //    }
-    //}
 
 
     public static void loadFromFile(string file_name)

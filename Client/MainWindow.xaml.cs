@@ -111,11 +111,6 @@ namespace Client
 
         }
 
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            //TODO remove if needed
-        }
-
         /// <summary>
         /// deze methode start het drag en drop proces wanneer de muis wordt ingedrukt en bewogen
         /// </summary>
@@ -243,30 +238,15 @@ namespace Client
         }
         public void AddTask(TaskItem task)
         {
-            //commented code is for loaclly 
-            //TodoItems.Add(task);
             networkManager.sendAddTask(task);
         }
         private void RemoveTask(TaskItem task)
         {
-            //commented code is for loaclly 
-            //todo needs work, maybe look at ID
-            // Remove task from appropriate list
-            //TodoItems.Remove(task);
-            //InProgressItems.Remove(task);
-            //DoneItems.Remove(task);
             networkManager.sendRemoveTask(task); 
         }
 
         private void EditTask(TaskItem task)
         {
-            //commented code is for loaclly 
-            //var targetList = TodoItems.FirstOrDefault(t => t.Id == task.Id) != null ? TodoItems :
-            //                 InProgressItems.FirstOrDefault(t => t.Id == task.Id) != null ? InProgressItems :
-            //                 DoneItems;
-
-            //var index = targetList.IndexOf(task);
-            //targetList[index] = task;
             networkManager.sendEditTask(task);
         }
         public void SimulateDragDrop(TaskItem task, ListBox targetListBox)
