@@ -44,6 +44,33 @@ namespace Server.nUnitTest
         }
 
         [Test]
+        public void CleanDoneTaskTest()
+        {
+            if (Program.TasksItems.Count != 0)
+            {
+                // items from last test found
+                Program.TasksItems.Clear();
+            }
+
+            TaskItem task1 = new TaskItem() { Id = "1", Name = "not done 1", Description = "testing item 1", State = TaskItem.TaskState.ToDo};
+            TaskItem task2 = new TaskItem() { Id = "2", Name = "not done 2", Description = "testing item 2", State = TaskItem.TaskState.Progress };
+            TaskItem task3 = new TaskItem() { Id = "3", Name = "done 1", Description = "testing item 3", State = TaskItem.TaskState.Done };
+            TaskItem task4 = new TaskItem() { Id = "4", Name = "done 2", Description = "testing item 4", State = TaskItem.TaskState.Done };
+
+            Program.TasksItems.Add(task1);
+            Program.TasksItems.Add(task2);
+            Program.TasksItems.Add(task3);
+            Program.TasksItems.Add(task4);
+
+            Program.CleanDoneTasks();
+
+            Assert.Contains(task1, Program.TasksItems, "method deleted TODO task while it should not");
+            Assert.Contains(task2, Program.TasksItems, "method deleted PROGRESS task while it should not");
+            Assert.IsEmpty(Program.TasksItems.Intersect([task3]), "method failed to remove DONE items");
+            Assert.IsEmpty(Program.TasksItems.Intersect([task4]), "method failed to remove DONE items");
+        }
+
+        [Test]
         public void GenerateUniqueIdTest()
         {
             if (Program.TasksItems.Count != 0)
