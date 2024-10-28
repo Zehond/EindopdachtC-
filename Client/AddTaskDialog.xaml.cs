@@ -1,0 +1,36 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
+
+namespace Client
+{
+    /// <summary>
+    /// Interaction logic for AddTaskDialog.xaml
+    /// </summary>
+    public partial class AddTaskDialog : Window
+    {
+        public string TaskName { get; set; }
+        public string TaskDescription { get; set; }
+
+        public AddTaskDialog()
+        {
+            InitializeComponent();
+        }
+        private void AddTaskButton_Click(object sender, RoutedEventArgs e)
+        {
+            TaskName = TaskNameTextBox.Text;
+            TaskDescription = TaskDescriptionTextBox.Text;
+            DialogResult = true; // Close the dialog
+        }
+    }
+}
