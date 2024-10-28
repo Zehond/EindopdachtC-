@@ -68,6 +68,10 @@ namespace Server.nUnitTest
                 // items from last test found
                 Program.TasksItems.Clear();
             }
+            if (File.Exists(FILE_PATH))
+            {
+                File.Delete(FILE_PATH);
+            }
 
             Program.TasksItems.Add(new TaskItem() { Id = "1", Name = "generateIdTest1", Description = "testing item 1", State = TaskItem.TaskState.ToDo });
             Program.TasksItems.Add(new TaskItem() { Id = "2", Name = "generateIdTest2", Description = "testing item 2", State = TaskItem.TaskState.ToDo });

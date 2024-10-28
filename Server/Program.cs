@@ -24,7 +24,7 @@ public class Program
 
         TCPServer = new TcpListener(IPAddress.Any, 1234);
         TCPServer.Start();
-        Console.WriteLine("server started");
+        Console.WriteLine("server started on port 1234");
 
         while (true)
         {
@@ -153,7 +153,7 @@ public class Program
     }
 
 
-    public static void BroadcastUpdate()
+    private static void BroadcastUpdate()
     {
         Console.WriteLine("sending update to all clients =");
         foreach (var client in Clients)
